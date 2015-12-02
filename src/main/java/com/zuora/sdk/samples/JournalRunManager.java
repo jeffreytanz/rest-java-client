@@ -20,18 +20,31 @@ public class JournalRunManager {
 
 	      args.set("reqBody", new ZAPIArgs());
 	      args.getArg("reqBody").set("journalEntryDate", "2014-11-30");
+	      //Setting only the accounting period will create a Journal Run for the whole Accounting Period
 	      args.getArg("reqBody").set("accountingPeriodName", "Nov-2014");
+	      //Setting only the start date will create a Journal Run only for a single day
 	      args.getArg("reqBody").set("targetStartDate", "2014-11-01");
+	      //Setting the start date and end date within the same accounting period will generate a Journal Run of a date range
 	      args.getArg("reqBody").set("targetEndDate", "2014-11-30");
+	      
+	      //If creating a Journal Run not for an Accounting Period for all Transasction Types, use the following
+	      //If Invoice Adjustment is enabled in the tenant
+	      //String[] transactionTypes = "Invoice Item|Invoice Adjustment|Taxation Item|Invoice Item Adjustment (Invoice)|Invoice Item Adjustment (Tax)|Electronic Payment|External Payment|Electronic Refund|External Refund|Electronic Credit Balance Payment|External Credit Balance Payment|Electronic Credit Balance Refund|External Credit Balance Refund|Credit Balance Adjustment (Applied from Credit Balance)|Credit Balance Adjustment (Transferred to Credit Balance)".split(Pattern.quote("|"));
+	      //If Invoice Adjustment is not enabled in the tenant
+	      String[] transactionTypes = "Invoice Item|Taxation Item|Invoice Item Adjustment (Invoice)|Invoice Item Adjustment (Tax)|Electronic Payment|External Payment|Electronic Refund|External Refund|Electronic Credit Balance Payment|External Credit Balance Payment|Electronic Credit Balance Refund|External Credit Balance Refund|Credit Balance Adjustment (Applied from Credit Balance)|Credit Balance Adjustment (Transferred to Credit Balance)".split(Pattern.quote("|"));
+	      
+	      //If creating a Journal Run for an Accounting Period for all Transasction Types, use the following
+	      //If Invoice Adjustment is not enabled in the tenant
+	      //String[] transactionTypes = "Invoice Item|Taxation Item|Invoice Item Adjustment (Invoice)|Invoice Item Adjustment (Tax)|Electronic Payment|External Payment|Electronic Refund|External Refund|Electronic Credit Balance Payment|External Credit Balance Payment|Electronic Credit Balance Refund|External Credit Balance Refund|Credit Balance Adjustment (Applied from Credit Balance)|Credit Balance Adjustment (Transferred to Credit Balance)|Revenue Event Item".split(Pattern.quote("|"));
+	      //If Invoice Adjustment is enabled in the tenant
+	      //String[] transactionTypes = new String[]{"All"};
 	      
 	      
 	      args.getArg("reqBody").setArray("transactionTypes");
-	      args.getArg("reqBody").set("transactionTypes[0]",  new ZAPIArgs());
-	      args.getArg("reqBody").getArg("transactionTypes[0]").set("type", "Invoice Item");
-	      args.getArg("reqBody").set("transactionTypes[1]",  new ZAPIArgs());
-	      args.getArg("reqBody").getArg("transactionTypes[1]").set("type", "Invoice Item Adjustment (Invoice)");
-	      args.getArg("reqBody").set("transactionTypes[2]",  new ZAPIArgs());
-	      args.getArg("reqBody").getArg("transactionTypes[2]").set("type", "Revenue Event Item");
+	      for (int i=0;i<transactionTypes.length;i++){
+		      args.getArg("reqBody").set("transactionTypes["+i+"]",new ZAPIArgs());
+		      args.getArg("reqBody").getArg("transactionTypes["+i+"]").set("type", transactionTypes[i]);
+	      }
 	      
   
 	      System.out.println("========== CREATE JOURNAL RUN ============");
